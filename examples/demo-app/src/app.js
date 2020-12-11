@@ -358,6 +358,19 @@ class App extends Component {
   };
 
   render() {
+
+    this.token = 'pk.eyJ1IjoiY2h1aXNjbyIsImEiOiJja2hsMGxnYTEwb3h2MnNwOXVmYmc2ZjJiIn0.OQYIA7TsDWsDuqDyGwvztw';
+    this.apiHost = "https://api.mapbox.cn";
+    this.mapStyles = [
+      {
+        id: 'dark',
+        label: 'Alejito',
+        url: 'mapbox://styles/chuisco/ckhknsb470bbq1aphpffxyl3y',
+        icon: `${this.apiHost}/styles/v1/mapbox/dark-v9/static/-122.3391,37.7922,9.19,0,0/400x300?access_token=${this.token}&logo=false&attribution=false`,
+        layerGroups: [] // DEFAULT_LAYER_GROUPS
+      }
+    ];
+
     return (
       <ThemeProvider theme={theme}>
         <GlobalStyle
@@ -389,7 +402,7 @@ class App extends Component {
             <AutoSizer>
               {({height, width}) => (
                 <KeplerGl
-                  mapboxApiAccessToken={AUTH_TOKENS.MAPBOX_TOKEN}
+                  mapboxApiAccessToken={this.token}
                   id="map"
                   /*
                    * Specify path to keplerGl state, because it is not mount at the root

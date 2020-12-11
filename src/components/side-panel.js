@@ -128,7 +128,7 @@ export default function SidePanelFactory(
     /* component private functions */
     _onOpenOrClose = () => {
       this.props.uiStateActions.toggleSidePanel(
-        this.props.uiState.activeSidePanel ? null : 'layer'
+        this.props.uiState.activeSidePanel ? null : 'predefined-filters'
       );
     };
 
@@ -244,7 +244,7 @@ export default function SidePanelFactory(
             minifiedWidth={0}
             onOpenOrClose={this._onOpenOrClose}
           >
-            <PanelHeader
+            {/* <PanelHeader
               appName={appName}
               version={version}
               appWebsite={appWebsite}
@@ -267,7 +267,7 @@ export default function SidePanelFactory(
               panels={panels}
               activePanel={activeSidePanel}
               togglePanel={uiStateActions.toggleSidePanel}
-            />
+            /> */}
             <SidePanelContent className="side-panel__content">
               <div className="side-panel__content__inner">
                 <PanelTitle className="side-panel__content__title">
@@ -301,12 +301,14 @@ export default function SidePanelFactory(
                     interactionConfig={interactionConfig}
                   />
                 )}
-                {activeSidePanel === 'map' && (
+                {/* {activeSidePanel === 'map' && (
                   <MapManager {...mapManagerActions} mapStyle={this.props.mapStyle} />
-                )}
+                )} */}
                 {(customPanels || []).find(p => p.id === activeSidePanel) ? (
                   <CustomPanels
                     {...getCustomPanelProps(this.props)}
+                    {...filterManagerActions}
+                    datasets={datasets}
                     activeSidePanel={activeSidePanel}
                   />
                 ) : null}

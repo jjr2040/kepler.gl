@@ -19,21 +19,52 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import { FilterFunnel } from '../common/icons';
 
 // This is a dummy component that can be replaced to inject more side panel sub panels into the side bar
 function CustomPanelsFactory() {
   const CustomPanels = props => {
-    return <div />;
+    
+    const { setFilter, addFilter, datasets } = props;
+
+    const removeFilters = () => {
+      setFilter(0, 'value', []);
+    }
+
+    const onSetFilterTimeline = () => {
+      // addFilter('country');
+      addFilter(Object.keys(datasets)[0]);
+      setFilter(0, 'name', 'yeatTS');
+    };
+
+    const onSetFilter = (value) => {
+      // addFilter('country');
+      addFilter(Object.keys(datasets)[0]);
+      setFilter(0, 'name', 'Category');
+      setFilter(0, 'value', [value]);
+    };
+
+    return (
+      <div>
+        <p style={{ color: 'white'}}>Cualquier cosa</p>
+        {/* <button onClick={onAddFilter}>Add filter</button> */}
+        <button onClick={removeFilters}>Remove filter</button>
+        <button onClick={onSetFilterTimeline}>Timeline</button>
+        <button onClick={ () => onSetFilter('Research trips')}>Research trips</button>
+        <button onClick={ () => onSetFilter('Residency')}>Residency</button>
+
+      </div>
+    );
   };
 
   CustomPanels.defaultProps = {
     // provide a list of additional panels
     panels: [
-      // {
-      //   id: 'rocket',
-      //   label: 'Rocket',
-      //   iconComponent: Icons.Rocket
-      // },
+      {
+        id: 'predefined-filters',
+        label: 'Filters',
+        iconComponent: FilterFunnel
+      },
       // {
       //   id: 'chart',
       //   label: 'Chart',
