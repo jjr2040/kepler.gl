@@ -32,6 +32,8 @@ import {replaceMapControl} from './factories/map-control';
 import {replacePanelHeader} from './factories/panel-header';
 import {AUTH_TOKENS} from './constants/default-settings';
 import {messages} from './constants/localization';
+import { processKeplerglJSON } from 'kepler.gl/processors';
+import cconfigJson from './data/concidencias-keplergl.json';
 
 import {
   loadRemoteMap,
@@ -59,7 +61,7 @@ import sampleH3Data, {config as h3MapConfig} from './data/sample-hex-id-csv';
 import sampleS2Data, {config as s2MapConfig, dataId as s2DataId} from './data/sample-s2-data';
 import sampleAnimateTrip from './data/sample-animate-trip-data';
 import sampleIconCsv, {config as savedMapConfig} from './data/sample-icon-csv';
-import {addDataToMap, addNotification} from 'kepler.gl/actions';
+import {addDataToMap, addNotification, receiveMapConfig} from 'kepler.gl/actions';
 import {processCsvData, processGeojson} from 'kepler.gl/processors';
 /* eslint-enable no-unused-vars */
 
@@ -136,7 +138,7 @@ class App extends Component {
     //   window.setTimeout(this._showBanner, 3000);
     // }
     // load sample data
-    // this._loadSampleData();
+    this._loadSampleData();
 
     // Notifications
     // this._loadMockNotifications();
@@ -178,13 +180,18 @@ class App extends Component {
   }
 
   _loadSampleData() {
-    this._loadPointData();
+    this._loadConcidenciasData();
+    // this._loadPointData();
     // this._loadGeojsonData();
-    this._loadTripGeoJson();
+    // this._loadTripGeoJson();
     // this._loadIconData();
     // this._loadH3HexagonData();
     // this._loadS2Data();
     // this._loadScenegraphLayer();
+  }
+
+  _loadConcidenciasData() {
+    this.props.dispatch(addDataToMap(processKeplerglJSON(cconfigJson)));
   }
 
   _loadPointData() {

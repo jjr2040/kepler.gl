@@ -89,7 +89,25 @@ const demoReducer = combineReducers({
           exportMapboxAccessToken: AUTH_TOKENS.EXPORT_MAPBOX_TOKEN
         }
       },
-      activeSidePanel: 'predefined-filters'
+      activeSidePanel: 'predefined-filters',
+      mapControls: {
+        visibleLayers: {
+          show: false
+        },
+        mapLegend: {
+          show: false
+        },
+        toggle3d: {
+          show: true,
+          active: true
+        },
+        splitMap: {
+          show: false
+        },
+        mapDraw: {
+          show: false
+        }
+      }
     },
     visState: {
       loaders: [], // Add additional loaders.gl loaders here

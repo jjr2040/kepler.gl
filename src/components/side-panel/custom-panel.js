@@ -18,41 +18,104 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FilterFunnel } from '../common/icons';
+import style from './custom-panel-style.js';
 
 // This is a dummy component that can be replaced to inject more side panel sub panels into the side bar
 function CustomPanelsFactory() {
+  
   const CustomPanels = props => {
     
-    const { setFilter, addFilter, datasets } = props;
+    const TAG = 1;
+    const FILTER = 0;
+    
+    const { setFilter, addFilter, removeFilter, datasets, enlargeFilter } = props;
+    const [ selectedFilters, setSelectedFilters ] = useState([]);
+
+    const filters = [
+      {
+        label: 'Ecology',
+        keyword: 'ecology',
+        type: FILTER
+      },
+      {
+        label: 'Social narrative',
+        keyword: 'social narrative',
+        type: FILTER
+      },
+      {
+        label: 'Timeline',
+        keyword: 'yearTS',
+        type: TAG
+      }
+    ];
+
+    useEffect(() => {
+      addFilter(Object.keys(datasets)[0]);
+      addFilter(Object.keys(datasets)[0]);
+    }, []);
+
+    useEffect(() => {
+      
+      const keywords = selectedFilters.filter( f => f.type === FILTER).map( f => f.keyword);
+
+      setFilter(FILTER, 'name', 'keywords');
+      setFilter(FILTER, 'value', keywords);
+
+      selectedFilters.filter( f => f.type === TAG)
+                    .forEach( ({ keyword }) => {
+                      setFilter(TAG, 'name', keyword);
+      });
+    }, [selectedFilters]);
 
     const removeFilters = () => {
-      setFilter(0, 'value', []);
-    }
-
-    const onSetFilterTimeline = () => {
-      // addFilter('country');
+      setSelectedFilters([]);
+      removeFilter(TAG);
       addFilter(Object.keys(datasets)[0]);
-      setFilter(0, 'name', 'yeatTS');
     };
 
-    const onSetFilter = (value) => {
-      // addFilter('country');
-      addFilter(Object.keys(datasets)[0]);
-      setFilter(0, 'name', 'Category');
-      setFilter(0, 'value', [value]);
+    const Button = filter => {
+
+      const { keyword, label, type } = filter;
+      const buttonStyle = selectedFilters.find( f => f.keyword === keyword ) ? style.button.selected : style.button;
+
+      const action = () =>  {
+        
+        const filterIndex = selectedFilters.findIndex( f => f.keyword === keyword );
+        
+        if (filterIndex > -1) {
+          const newFilters = selectedFilters.filter( f => f.keyword !== keyword );
+          
+          if (!newFilters.length) {
+            removeFilters();
+          } else {
+            setSelectedFilters(newFilters);
+          }
+        } else {
+          setSelectedFilters([...selectedFilters, filter]);
+        }
+
+        if (type === TAG) {
+          enlargeFilter(TAG);
+        }
+      };
+
+      return (
+        <button 
+          style={ buttonStyle } 
+          key={keyword} 
+          onClick={ action }>
+            {label}
+          </button>
+      );
     };
 
     return (
-      <div>
-        <p style={{ color: 'white'}}>Cualquier cosa</p>
-        {/* <button onClick={onAddFilter}>Add filter</button> */}
-        <button onClick={removeFilters}>Remove filter</button>
-        <button onClick={onSetFilterTimeline}>Timeline</button>
-        <button onClick={ () => onSetFilter('Research trips')}>Research trips</button>
-        <button onClick={ () => onSetFilter('Residency')}>Residency</button>
-
+      <div style={style.container}>
+        <p style={style.title}>Cualquier cosa</p>
+        <button onClick={removeFilters}>Remove filters</button>
+        { filters.map( filter => Button(filter) ) }
       </div>
     );
   };
