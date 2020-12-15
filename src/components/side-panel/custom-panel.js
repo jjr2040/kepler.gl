@@ -29,7 +29,7 @@ function CustomPanelsFactory() {
     const TAG = 1;
     const FILTER = 0;
 
-    const { setFilter, addFilter, removeFilter, datasets, enlargeFilter } = props;
+    const { setFilter, addFilter, removeFilter, datasets, enlargeFilter, layerConfigChange, layers } = props;
     const [selectedFilters, setSelectedFilters] = useState([]);
 
     const filters = [
@@ -83,6 +83,8 @@ function CustomPanelsFactory() {
     useEffect(() => {
       addFilter(Object.keys(datasets)[0]);
       addFilter(Object.keys(datasets)[0]);
+      addFilter(Object.keys(datasets)[0]);
+      layerConfigChange(layers[2], { isVisible: false } );
     }, []);
 
     useEffect(() => {
@@ -137,10 +139,26 @@ function CustomPanelsFactory() {
       );
     };
 
+    const ToggleButton = ({label, isSelected}) => {
+
+      const action = () => {
+        layerConfigChange(layers[2], { isVisible: !layers[2].config.isVisible } );
+      };
+
+      const buttonStyle = isSelected ? style.button.selected : style.button;
+
+      return (
+        <button style={buttonStyle} onClick={action}>
+          {label}
+        </button>
+      )
+    }
+
     return (
       <div style={style.container}>
         <p style={style.title}>Use the timeline or choose keywords to filter the projects.</p>
         {filters.map(filter => Button(filter))}
+        <ToggleButton label={"Related links"} isSelected={layers[2].config.isVisible} />
         <button style={style.removeButton} onClick={removeFilters}> Remove filters </button>
         <img style={style.logo} width="160" height="25" alt="logo" src={'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F4%2F41%2FProhelvetia_Logo.svg%2F1134px-Prohelvetia_Logo.svg.png&f=1&nofb=1'} />
       </div>

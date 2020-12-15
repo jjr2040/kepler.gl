@@ -308,6 +308,8 @@ export default function SidePanelFactory(
                   <CustomPanels
                     {...getCustomPanelProps(this.props)}
                     {...filterManagerActions}
+                    {...layerManagerActions}
+                    layers={layers}
                     datasets={datasets}
                     activeSidePanel={activeSidePanel}
                   />
