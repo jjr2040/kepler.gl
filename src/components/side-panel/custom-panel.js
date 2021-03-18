@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import { forEach } from '@loaders.gl/loader-utils';
+import { filter } from 'fuzzy';
 import React, { useEffect, useState } from 'react';
 import { FilterFunnel } from '../common/icons';
 import style from './custom-panel-style.js';
@@ -26,8 +28,18 @@ import style from './custom-panel-style.js';
 // This is a dummy component that can be replaced to inject more side panel sub panels into the side bar
 function CustomPanelsFactory() {
   const CustomPanels = props => {
-    const TAG = 1;
-    const FILTER = 0;
+    const filterTypes = [
+      { index: 0, columnName: 'Tc1'}, 
+      { index: 1, columnName: 'Tc2'}, 
+      { index: 2, columnName: 'Tc3'}, 
+      { index: 3, columnName: 'Tc4'}, 
+      { index: 4, columnName: 'Tc5'}, 
+      { index: 5, columnName: 'Tc6'}, 
+      { index: 6, columnName: 'disciplines'}, 
+      { index: 7, columnName: 'Category'},
+      { index: 8, columnName: 'yearTS'}
+    ];
+    const [TC1, TC2, TC3, TC4, TC5, TC6, DICIPLINES, CATEGORY, TIMELINE] = filterTypes;
 
     const { setFilter, addFilter, removeFilter, datasets, enlargeFilter, layerConfigChange, layers } = props;
     const [selectedFilters, setSelectedFilters] = useState([]);
@@ -36,87 +48,154 @@ function CustomPanelsFactory() {
       {
         label: 'Timeline',
         keyword: 'yearTS',
-        type: TAG
+        type: TIMELINE
       },
       {
-        label: 'Architecture',
-        keyword: 'architecture',
-        type: FILTER
+        label: 'TC1',
+        keyword: 'y',
+        type: TC1
       },
       {
-        label: 'Archivism',
-        keyword: 'archivism',
-        type: FILTER
+        label: 'TC2',
+        keyword: 'y',
+        type: TC2
       },
       {
-        label: 'Ecology',
-        keyword: 'ecology',
-        type: FILTER
+        label: 'TC3',
+        keyword: 'y',
+        type: TC3
+      },
+      {
+        label: 'TC4',
+        keyword: 'y',
+        type: TC4
+      },
+      {
+        label: 'TC5',
+        keyword: 'y',
+        type: TC5
+      },
+      {
+        label: 'TC6',
+        keyword: 'y',
+        type: TC6
       },
       {
         label: 'Literature',
-        keyword: 'literature',
-        type: FILTER
+        keyword: 'Literature',
+        type: DICIPLINES
       },
       {
-        label: 'New media',
-        keyword: 'new media',
-        type: FILTER
+        label: 'Music',
+        keyword: 'Music',
+        type: DICIPLINES
       },
       {
-        label: 'Performance',
-        keyword: 'performance',
-        type: FILTER
+        label: 'Visual Arts',
+        keyword: 'Visual Arts',
+        type: DICIPLINES
       },
       {
-        label: 'Plastic visual arts',
-        keyword: 'plastic visual arts',
-        type: FILTER
+        label: 'Performing Arts',
+        keyword: 'Performing Arts',
+        type: DICIPLINES
       },
       {
-        label: 'Social narrative',
-        keyword: 'social narrative',
-        type: FILTER
-      }
+        label: 'Multidisciplinary',
+        keyword: 'Multidisciplinary',
+        type: DICIPLINES
+      },
+      {
+        label: 'Architecture',
+        keyword: ' Architecture ',
+        type: DICIPLINES
+      },
+      {
+        label: '1',
+        keyword: 'a',
+        type: CATEGORY
+      },
+      {
+        label: '2',
+        keyword: 'b',
+        type: CATEGORY
+      },
+      {
+        label: '3',
+        keyword: 'c',
+        type: CATEGORY
+      },
+      {
+        label: '4',
+        keyword: 'd',
+        type: CATEGORY
+      },
+      {
+        label: '5',
+        keyword: 'e',
+        type: CATEGORY
+      },
     ];
 
     useEffect(() => {
-      addFilter(Object.keys(datasets)[0]);
-      addFilter(Object.keys(datasets)[0]);
-      addFilter(Object.keys(datasets)[0]);
+      // Agrega los filtros al iniciar
+      filterTypes.forEach( () => {
+        addFilter(Object.keys(datasets)[0])
+      });
+
+      // Se inicializa este layer con visible false para los related links
       layerConfigChange(layers[2], { isVisible: false } );
     }, []);
 
     useEffect(() => {
-      const keywords = selectedFilters.filter(f => f.type === FILTER).map(f => f.keyword);
+      // Agrega los filtros de tipo keyword
 
-      setFilter(FILTER, 'name', 'keywords');
-      setFilter(FILTER, 'value', keywords);
+      filterTypes.forEach( filterType => {
 
+        if (filterType.columnName == TIMELINE.columnName) 
+          return; 
+
+        const keywords = selectedFilters.filter(f => f.type.columnName == filterType.columnName)
+                                        .map(f => f.keyword);
+        
+        setFilter(filterType.index, 'name', `${filterType.columnName}`);
+        setFilter(filterType.index, 'value', keywords);
+      });
+
+      // Agrega los filtros de tipo TIMELINE
       selectedFilters
-        .filter(f => f.type === TAG)
+        .filter(f => f.type.columnName == TIMELINE.columnName)
         .forEach(({ keyword }) => {
-          setFilter(TAG, 'name', keyword);
+          setFilter(TIMELINE.index, 'name', keyword);
         });
     }, [selectedFilters]);
 
     const removeFilters = () => {
       setSelectedFilters([]);
-      removeFilter(TAG);
+      removeFilter(TIMELINE.index);
       addFilter(Object.keys(datasets)[0]);
     };
 
     const Button = filter => {
       const { keyword, label, type } = filter;
-      const buttonStyle = selectedFilters.find(f => f.keyword === keyword)
+      const buttonStyle = selectedFilters.find(f => f.keyword == keyword && f.type.columnName == type.columnName)
         ? style.button.selected
         : style.button;
 
       const action = () => {
-        const filterIndex = selectedFilters.findIndex(f => f.keyword === keyword);
+        const filterIndex = selectedFilters.findIndex(f => f.keyword == keyword && f.type.columnName == type.columnName);
 
         if (filterIndex > -1) {
-          const newFilters = selectedFilters.filter(f => f.keyword !== keyword);
+
+          const tcFilter = f => {
+            return f.type.columnName !== type.columnName;
+          };
+
+          const othersFilter = f => {
+            return f.keyword !== keyword;
+          };
+
+          const newFilters = selectedFilters.filter( type.columnName.startsWith('Tc') ? tcFilter : othersFilter );
 
           if (!newFilters.length) {
             removeFilters();
@@ -127,13 +206,13 @@ function CustomPanelsFactory() {
           setSelectedFilters([...selectedFilters, filter]);
         }
 
-        if (type === TAG) {
-          enlargeFilter(TAG);
+        if (type.columnName == TIMELINE.columnName) {
+          enlargeFilter(TIMELINE.index);
         }
       };
 
       return (
-        <button style={buttonStyle} key={keyword} onClick={action}>
+        <button style={buttonStyle} key={`${keyword}_${type.columnName}`} onClick={action}>
           {label}
         </button>
       );

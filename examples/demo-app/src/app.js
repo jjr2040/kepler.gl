@@ -180,6 +180,7 @@ class App extends Component {
   }
 
   _loadSampleData() {
+    // Carga la data inicial de las coincidencias
     this._loadConcidenciasData();
     // this._loadPointData();
     // this._loadGeojsonData();

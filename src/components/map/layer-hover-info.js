@@ -65,7 +65,7 @@ const Row = ({name, value, deltaValue, url}) => {
       <td className="row__name">{name}</td>
       <td className="row__value">
         {asImg ? (
-          <img src={value} />
+          <img src={value} width="100%" />
         ) : url ? (
           <a target="_blank" rel="noopener noreferrer" href={url}>
             {value}
